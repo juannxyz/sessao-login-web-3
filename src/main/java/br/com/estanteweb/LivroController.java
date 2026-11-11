@@ -137,6 +137,20 @@ public class LivroController {
         return livro;
     }
 
+    @GetMapping("/livros/{id}/remover")
+    public String confirmarRemocao(@PathVariable Long id, Model model) {
+        model.addAttribute("livro", livroExistente(id));
+        return "livro-remover";
+    }
+
+    @PostMapping("/livros/{id}/remover")
+    public String removerLivro(@PathVariable Long id) {
+        if (repository.remover(id) == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return "redirect:/livros/html";
+    }
+
     private String validar(String titulo, String autor, String ano, String preco, Livro livro) {
         if (titulo.isBlank() || autor.isBlank()) return "Título e autor não podem ficar em branco.";
         try {

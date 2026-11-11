@@ -10,6 +10,7 @@
     <p><strong>Ano:</strong> ${livro.ano?c}</p>
     <p><strong>Preço:</strong> R$ ${livro.preco?c}</p>
     <p><a href="/livros/${livro.id?c}/editar">Corrigir livro</a></p>
+    <p><a href="/livros/${livro.id?c}/remover">Remover livro</a></p>
     <p><a href="/livros/html">Voltar para o acervo</a></p>
 </body>
 </html>

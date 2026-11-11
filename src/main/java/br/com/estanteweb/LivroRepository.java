@@ -28,6 +28,10 @@ public class LivroRepository {
         return jdbcTemplate.update("DELETE FROM livro WHERE id = ?", id);
     }
 
+    public int remover(Long id) {
+        return jdbcTemplate.update("DELETE FROM livro WHERE id = ?", id);
+    }
+
     public List<Livro> listarTodos() {
         String sql = "SELECT * FROM livro";
         List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql);
