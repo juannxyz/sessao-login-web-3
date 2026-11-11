@@ -18,9 +18,22 @@
     <#else>
         <ul>
             <#list livros as livro>
-                <li><a href="/livros/${livro.id?c}">${livro.titulo}</a>, de ${livro.autor} (R$ ${livro.preco?c})</li>
+                <li>
+                    <a href="/livros/${livro.id?c}">${livro.titulo}</a>, de ${livro.autor} (R$ ${livro.preco?c})
+                    <form method="post" action="/livros/${livro.id?c}/remover" class="remover-livro" data-titulo="${livro.titulo}">
+                        <button type="submit">Remover</button>
+                    </form>
+                </li>
             </#list>
         </ul>
     </#if>
+    <script>
+        document.querySelectorAll("form.remover-livro").forEach((formulario) => {
+            formulario.addEventListener("submit", (evento) => {
+                const confirmar = window.confirm(`Deseja remover o livro "${formulario.dataset.titulo}"?`);
+                if (!confirmar) evento.preventDefault();
+            });
+        });
+    </script>
 </body>
 </html>
