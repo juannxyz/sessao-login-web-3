@@ -1,6 +1,7 @@
 package br.com.estanteweb;
 
 public class Sugestao {
+    private long id;
     private String nomeCliente;
     private String livroSugerido;
 
@@ -12,6 +13,11 @@ public class Sugestao {
     public String getNomeCliente() {
         return nomeCliente;
     }
+
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
+    public void setNomeCliente(String nomeCliente) { this.nomeCliente = nomeCliente; }
+    public void setLivroSugerido(String livroSugerido) { this.livroSugerido = livroSugerido; }
 
     public String getLivroSugerido() {
         return livroSugerido;
