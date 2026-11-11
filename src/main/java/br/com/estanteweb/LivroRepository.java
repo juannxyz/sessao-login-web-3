@@ -19,6 +19,15 @@ public class LivroRepository {
         jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco());
     }
 
+    public int atualizar(Livro livro) {
+        String sql = "UPDATE livro SET titulo = ?, autor = ?, ano = ?, preco = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco(), livro.getId());
+    }
+
+    public int remover(Long id) {
+        return jdbcTemplate.update("DELETE FROM livro WHERE id = ?", id);
+    }
+
     public List<Livro> listarTodos() {
         String sql = "SELECT * FROM livro";
         List<Map<String, Object>> linhas = jdbcTemplate.queryForList(sql);

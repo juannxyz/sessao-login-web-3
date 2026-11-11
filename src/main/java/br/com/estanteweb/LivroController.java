@@ -100,6 +100,57 @@ public class LivroController {
         return "livro";
     }
 
+    @GetMapping("/livros/{id}/editar")
+    public String formularioEdicao(@PathVariable Long id, Model model) {
+        Livro livro = livroExistente(id);
+        model.addAttribute("livro", livro);
+        return "livro-editar";
+    }
+
+    @PostMapping("/livros/{id}/editar")
+    public String editarLivro(@PathVariable Long id, @RequestParam String titulo,
+                              @RequestParam String autor, @RequestParam String ano,
+                              @RequestParam String preco, Model model) {
+        Livro livro = new Livro();
+        livro.setId(id);
+        livro.setTitulo(titulo);
+        livro.setAutor(autor);
+        String erro = validar(titulo, autor, ano, preco, livro);
+        if (erro != null) {
+            model.addAttribute("erro", erro);
+            model.addAttribute("livro", livro);
+            model.addAttribute("tituloInformado", titulo);
+            model.addAttribute("autorInformado", autor);
+            model.addAttribute("anoInformado", ano);
+            model.addAttribute("precoInformado", preco);
+            return "livro-editar";
+        }
+        if (repository.atualizar(livro) == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return "redirect:/livros/" + id;
+    }
+
+    private Livro livroExistente(Long id) {
+        Livro livro = repository.buscarPorId(id);
+        if (livro == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        return livro;
+    }
+
+    private String validar(String titulo, String autor, String ano, String preco, Livro livro) {
+        if (titulo.isBlank() || autor.isBlank()) return "Título e autor não podem ficar em branco.";
+        try {
+            livro.setAno(Integer.parseInt(ano));
+            livro.setPreco(Double.parseDouble(preco));
+        } catch (NumberFormatException e) {
+            return "Ano e preço devem ser números válidos.";
+        }
+        if (!Double.isFinite(livro.getPreco()) || livro.getPreco() <= 0) {
+            return "O preço deve ser maior que zero e ser um número válido.";
+        }
+        return null;
+    }
+
     @GetMapping(value = "/livros/busca", produces = "text/plain")
     public ResponseEntity<String> buscarPorPreco(@RequestParam(defaultValue = "999") double precoMaximo) {
         List<Livro> livros = repository.listarAtePreco(precoMaximo);
