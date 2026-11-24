@@ -1,6 +1,7 @@
 package br.com.estanteweb;
 
 import java.util.List;
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,8 @@ public class LivroController {
     private LivroRepository repository;
 
     @GetMapping("/livros/novo")
-    public String formularioLivro() {
+    public String formularioLivro(HttpSession session) {
+        if (semLogin(session)) return "redirect:/login";
         return "livro-novo";
     }
 
@@ -31,7 +33,8 @@ public class LivroController {
                                 @RequestParam String autor,
                                 @RequestParam int ano,
                                 @RequestParam double preco,
-                                Model model) {
+                                Model model, HttpSession session) {
+        if (semLogin(session)) return "redirect:/login";
         String erro = null;
         if (titulo.isBlank() || autor.isBlank()) {
             erro = "Título e autor não podem ficar em branco.";
@@ -101,7 +104,8 @@ public class LivroController {
     }
 
     @GetMapping("/livros/{id}/editar")
-    public String formularioEdicao(@PathVariable Long id, Model model) {
+    public String formularioEdicao(@PathVariable Long id, Model model, HttpSession session) {
+        if (semLogin(session)) return "redirect:/login";
         Livro livro = livroExistente(id);
         model.addAttribute("livro", livro);
         return "livro-editar";
@@ -110,7 +114,8 @@ public class LivroController {
     @PostMapping("/livros/{id}/editar")
     public String editarLivro(@PathVariable Long id, @RequestParam String titulo,
                               @RequestParam String autor, @RequestParam String ano,
-                              @RequestParam String preco, Model model) {
+                              @RequestParam String preco, Model model, HttpSession session) {
+        if (semLogin(session)) return "redirect:/login";
         Livro livro = new Livro();
         livro.setId(id);
         livro.setTitulo(titulo);
@@ -137,14 +142,16 @@ public class LivroController {
         return livro;
     }
 
-    @GetMapping("/livros/{id}/remover")
-    public String confirmarRemocao(@PathVariable Long id, Model model) {
+    @GetMapping("/livros/{id}/excluir")
+    public String confirmarRemocao(@PathVariable Long id, Model model, HttpSession session) {
+        if (semLogin(session)) return "redirect:/login";
         model.addAttribute("livro", livroExistente(id));
         return "livro-remover";
     }
 
-    @PostMapping("/livros/{id}/remover")
-    public String removerLivro(@PathVariable Long id) {
+    @PostMapping("/livros/{id}/excluir")
+    public String removerLivro(@PathVariable Long id, HttpSession session) {
+        if (semLogin(session)) return "redirect:/login";
         if (repository.remover(id) == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -163,6 +170,10 @@ public class LivroController {
             return "O preço deve ser maior que zero e ser um número válido.";
         }
         return null;
+    }
+
+    private boolean semLogin(HttpSession session) {
+        return session.getAttribute("usuarioLogado") == null;
     }
 
     @GetMapping(value = "/livros/busca", produces = "text/plain")

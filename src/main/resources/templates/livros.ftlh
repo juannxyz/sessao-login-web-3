@@ -6,6 +6,9 @@
 <body>
     <#include "cabecalho.ftlh">
     <h1>Acervo EstanteWeb</h1>
+    <#if usuarioLogado??>
+        <p><a href="/livros/novo">Cadastrar livro</a></p>
+    </#if>
     <p>Ordenar por:
         <a href="/livros/html?ordem=titulo">Título</a> |
         <a href="/livros/html?ordem=autor">Autor</a> |
@@ -20,9 +23,11 @@
             <#list livros as livro>
                 <li>
                     <a href="/livros/${livro.id?c}">${livro.titulo}</a>, de ${livro.autor} (R$ ${livro.preco?c})
-                    <form method="post" action="/livros/${livro.id?c}/remover" class="remover-livro" data-titulo="${livro.titulo}">
-                        <button type="submit">Remover</button>
-                    </form>
+                    <#if usuarioLogado??>
+                        <form method="post" action="/livros/${livro.id?c}/excluir" class="remover-livro" data-titulo="${livro.titulo}">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </#if>
                 </li>
             </#list>
         </ul>
